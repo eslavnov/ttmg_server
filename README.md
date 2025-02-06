@@ -150,12 +150,12 @@ Now this assistant is talking to TTMG Server! You can try to start a conversatio
 This is the final step - now we are going to fix/break some things in your HAVPE firmware to make it work with TTMG Server. 
 
 Each HAVPE device needs to be set up individually, but it's a one-time operation:
-1. Get your `device_id` from home assistant. Go to Automations, create a new one, select device as a trigger, choose your HAVPE device and then switch to yaml view to get it. Don't save the automation, you just need to find out the `device_id`.
+1. Get your `device_id` from Home Assistant. Go to Automations, create a new one, select device as a trigger, choose your HAVPE device and then switch to yaml view to get the `device_id`. Don't save the automation, you just need to find out the `device_id`.
 2. Run `generate_esphome_config.sh`. It will ask you for the `device_id` and TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
     - Increase the default timeout to 15s (not really needed, but a good safety net in case LLM takes a long time to start generating a response for some reason)
     - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to TTMG Server.
 3. The script will output a path to the folder with customs components for your particular HAVPE device.
-4. Add the following to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
+4. Add the following codeblock to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
 ```
 external_components:
   - source:
