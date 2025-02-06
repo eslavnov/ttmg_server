@@ -1,7 +1,7 @@
 # Talk To Me Goose - Stream LLM responses into TTS engines
 ![Logo](assets/logo.jpg)
 
-Streaming LLM's output directly into TTS sytems in real time, to improve experience with Home Assistant Voice devices on long outputs.
+Streaming LLM's output directly into TTS sytems in real time, which improves experience with Home Assistant Voice devices on long text/audio outputs.
 
 ## What is the problem?
 
@@ -32,6 +32,7 @@ This solution streams the response of your LLM directly into your TTS engine of 
 1. Read the [Known issues](#known-issues). These should not be a problem for most people, but make sure you are aware of the limitations.
 2. Ensure you have [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) installed (as a HASS addon or separately, it does not matter).
 3. Adopt your HAVPE device in ESPHome Device Builder. It will break your [automatic update notifications](https://voice-pe.home-assistant.io/guides/update/).
+4. Install [ffmpeg](https://www.ffmpeg.org/) which is required to convert audio streams for HAVPE devices. 
 
 Now you can set everything up in 5 easy(-ish) steps!
 
