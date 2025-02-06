@@ -1,4 +1,4 @@
-# Talk To Me Goose 
+# Talk To Me Goose - Stream LLM responses into TTS engines
 ![Logo](assets/logo.jpg)
 
 Streaming LLM's output directly into TTS sytems in real time, to improve experience with Home Assistant Voice devices on long outputs.
