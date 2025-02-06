@@ -1,0 +1,17 @@
+[Unit]
+Description=TTMG Server
+After=syslog.target network.target
+
+[Service]
+User=homeassistant
+Group=homeassistant
+Type=simple
+
+WorkingDirectory=/home/homeassistant/ttmg_server/
+ExecStart=bash ./start.sh
+TimeoutStopSec=20
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

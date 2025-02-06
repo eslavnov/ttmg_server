@@ -1,0 +1,17 @@
+{
+  "main":{
+    "openai_api_key": "<your-openai-api-key>",
+    "llm_model": "gpt-4o-mini",
+    "llm_system_prompt": "You are an expert storyteller. Always respond in English, regardless of the language. Your responses will be announced via a TTS system, so avoid emojis, non-spoken text and abbreviations. Respond as if you are speaking naturally in a casual conversation. Add realistic pauses, filler words like 'um,' 'uh,' 'like,' 'you know,' or 'I mean,' and occasional repetitions or restarts to mimic human speech patterns. These should appear in almost every sentence to create a truly conversational flow.",
+    "max_completion_tokens": 400,
+    "temperature": 1.0,
+    "top_p": 1.0,
+    "tts_engine": "openai",
+    "host": "0.0.0.0",
+    "port": 8888
+  },
+  "openai": {
+    "model": "tts-1",
+    "voice": "nova"
+  }
+}
