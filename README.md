@@ -5,19 +5,19 @@ Streaming LLM's output directly into TTS sytems in real time, which improves exp
 
 ## What is the problem?
 
-Home Assistant Voice Preview Edition (HAVPE) devices are amazing, but they do not handle long TTS responses that well, resulting in them silently failing on long audio responses. 
+Home Assistant Voice Preview Edition (HAVPE) devices are amazing, but they do not handle long responses that well, silently failing in such cases. If your HAVPE devices sometimes do not respond to your commands, but then work fine with other requests (or after repeating it), this is likely the issue you are facing.
 
 Let's say you are using a LLM in your pipeline and you try to announce via a TTS system a response to a prompt like "Tell me a story about home assistant":
 
-*You send a request to the LLM => it takes 10 seconds to generate the output text => you will NOT get any response because there is a **5 second timeout** in HAVPE devices; in the HAVPE logs you will see `“HTTP_CLIENT: Connection timed out before data was ready!”`.*
+*You send a request to the LLM => it takes LLM 10 seconds to finish generating the output text => you will NOT get any response because there is a **5 second timeout** in HAVPE devices; in the HAVPE logs you will see `“HTTP_CLIENT: Connection timed out before data was ready!”`.*
 
-Even if you would manually increase the HAVPE timeout, it's still not ideal as you would have to wait 30 seconds for LLM and TTS to finish processing before getting any audio back.
+Even if you would manually [increase the HAVPE timeout](https://community.home-assistant.io/t/http-timeout-for-voice-assistant-pe-even-though-the-response-is-recieved/834200/4?u=gyrga), it's still not ideal as you will have to wait like 15 seconds before getting any audio back: 10 seconds for the LLM output and let's say another 5 seconds for the TTS to fully process it.
 
 ## Our approach
 
-This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 30 seconds to get a response. The flow would look like:
+This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 15 seconds to get a response. The flow would look like this:
 
-*You send a request to the LLM => the response is read token by token in real time until we hit an end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your request => as more sentences are processed, they are added in real-time to the audio stream*
+*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your request => as more sentences are processed, they are added in real-time to the audio stream*
 
 ## Supported LLM/TTS engines
 
