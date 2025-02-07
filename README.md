@@ -1,7 +1,22 @@
 # Talk To Me Goose - Stream LLM responses into TTS engines
 ![Logo](assets/logo.jpg)
 
-Streaming LLM's output directly into TTS sytems in real time, which improves experience with Home Assistant Voice devices on long text/audio outputs.
+Streams LLM's output directly into TTS systems in real-time, improving your experience with Home Assistant Voice devices with long text/audio outputs.
+
+**What's inside:**
+* [What is the problem?](#what-is-the-problem)
+* [Our approach](#our-approach)
+* [Supported LLM/TTS engines](#supported-llmtts-engines)
+* [Getting started](#getting-started)
+    * [Step 1: Installation - Server](#step-1-installation---server)
+    * [Step 2: Configuration - Server](#step-2-configuration---server)
+    * [Step 3: Installation - Home Assistant](#step-3-installation---home-assistant)
+    * [Step 4: Configuration - Home Assistant](#step-4-configuration---home-assistant)
+    * [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
+* [Usage](#usage)
+* [Known issues](#known-issues)
+* [Endpoints](#endpoints)
+* [Change log](#change-log)
 
 ## What is the problem?
 
@@ -154,7 +169,7 @@ This is the final step - now we are going to fix/break some things in your HAVPE
 
 Each HAVPE device needs to be set up individually, but it's a one-time operation:
 1. Get your `device_id` from Home Assistant. Go to Automations, create a new one, select device as a trigger, choose your HAVPE device and then switch to the yaml view to get the `device_id`. Don't save the automation, you just need to find out the `device_id`.
-2. Run `.\generate_esphome_config.sh`. It will ask you for the `device_id` and TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
+2. Run `chmod +x generate_esphome_config.sh` to allow execution of the script and then `.\generate_esphome_config.sh`. It will ask you for the `device_id` and TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
     - Increase the default timeout to 15s (not really needed, but a good safety net in case LLM takes a long time to start generating a response for some reason)
     - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to TTMG Server.
 3. The script will output a path to the folder with patched components for your particular HAVPE device.
