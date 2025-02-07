@@ -17,7 +17,7 @@ Even if you would manually [increase the HAVPE timeout](https://community.home-a
 
 This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 15 seconds to get a response. The flow would look like this:
 
-*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your request => as more sentences are processed, they are added in real-time to the audio stream*
+*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your initial request => as more sentences are processed, they are added in real-time to the audio stream*
 
 ## Supported LLM/TTS engines
 
