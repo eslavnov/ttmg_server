@@ -95,4 +95,4 @@ else:
 # Get the absolute path of the current working directory
 ABSOLUTE_PATH = os.getcwd()
 
-print(f"Script execution completed successfully! Files are modified at: {ABSOLUTE_PATH}/{BASE_DEST_DIR}")
+print(f"Script execution completed successfully! Files are modified at: {ABSOLUTE_PATH}/{BASE_DEST_DIR}/{DEVICE_ID}/")
