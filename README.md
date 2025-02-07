@@ -1,21 +1,38 @@
-# Talk To Me Goose 
+# Talk To Me Goose - Stream LLM responses into TTS engines
 ![Logo](assets/logo.jpg)
 
-Streaming LLM's output directly into TTS sytems in real time, to improve experience with Home Assistant Voice devices on long outputs.
+Streams LLM's output directly into TTS systems in real-time, improving your experience with Home Assistant Voice devices with long text/audio outputs.
+
+**What's inside:**
+* [What is the problem?](#what-is-the-problem)
+* [Our approach](#our-approach)
+* [Supported LLM/TTS engines](#supported-llmtts-engines)
+* [Getting started](#getting-started)
+    * [Step 1: Installation - Server](#step-1-installation---server)
+    * [Step 2: Configuration - Server](#step-2-configuration---server)
+    * [Step 3: Installation - Home Assistant](#step-3-installation---home-assistant)
+    * [Step 4: Configuration - Home Assistant](#step-4-configuration---home-assistant)
+    * [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
+* [Usage](#usage)
+* [Known issues](#known-issues)
+* [Endpoints](#endpoints)
+* [Change log](#change-log)
 
 ## What is the problem?
 
-Home Assistant Voice Preview Edition (HAVPE) devices are amazing, but they do not handle long TTS responses that well, resulting in them silently failing on long audio responses. 
+Home Assistant Voice Preview Edition (HAVPE) devices are amazing, but they do not handle long responses that well, silently failing in such cases. If your HAVPE devices sometimes do not respond to your commands, but then work fine with other requests (or after repeating it), this is likely the issue you are facing.
 
 Let's say you are using a LLM in your pipeline and you try to announce via a TTS system a response to a prompt like "Tell me a story about home assistant":
 
-*You send a request to the LLM => it takes 10 seconds to generate the output text => you will NOT get any response because there is a **5 second timeout** in HAVPE devices; in the HAVPE logs you will see `“HTTP_CLIENT: Connection timed out before data was ready!”`.*
+*You send a request to the LLM => it takes LLM 10 seconds to finish generating the output text => you will NOT get any response because there is a **5 second timeout** in HAVPE devices; in the HAVPE logs you will see `“HTTP_CLIENT: Connection timed out before data was ready!”`.*
+
+Even if you would manually [increase the HAVPE timeout](https://community.home-assistant.io/t/http-timeout-for-voice-assistant-pe-even-though-the-response-is-recieved/834200/4?u=gyrga), it's still not ideal as you will have to wait like 15 seconds before getting any audio back: 10 seconds for the LLM output and let's say another 5 seconds for the TTS to fully process it.
 
 ## Our approach
 
-This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 30 seconds to get a response. The flow would look like:
+This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 15 seconds to get a response. The flow would look like this:
 
-*You send a request to the LLM => the response is read token by token in real time until we hit an end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your request => as more sentences are processed, they are added in real-time to the audio stream*
+*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your initial request => as more sentences are processed, they are added in real-time to the audio stream*
 
 ## Supported LLM/TTS engines
 
@@ -32,6 +49,7 @@ This solution streams the response of your LLM directly into your TTS engine of 
 1. Read the [Known issues](#known-issues). These should not be a problem for most people, but make sure you are aware of the limitations.
 2. Ensure you have [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) installed (as a HASS addon or separately, it does not matter).
 3. Adopt your HAVPE device in ESPHome Device Builder. It will break your [automatic update notifications](https://voice-pe.home-assistant.io/guides/update/).
+4. Install [ffmpeg](https://www.ffmpeg.org/) which is required to convert audio streams for HAVPE devices. 
 
 Now you can set everything up in 5 easy(-ish) steps!
 
@@ -39,7 +57,7 @@ Now you can set everything up in 5 easy(-ish) steps!
 
 1. Clone the repo.
 2. Run the setup script with `./setup.sh` for Unix-based systems (make sure to run `chmod +x setup.sh` first) or `start.bat` for Windows. It will create a virtual environment and install the required dependencies.
-3. Edit `configuration.json` and add your OpenAI API key to the `main` section ([get it here](https://platform.openai.com/settings/organization/api-keys)). This is the only required parameter, but there are additional optional settings you can further configure - see [Configuration](https://github.com/eslavnov/llm-stream-tts#configuration).
+3. Edit `configuration.json` and add your OpenAI API key to the `main` section ([get it here](https://platform.openai.com/settings/organization/api-keys)). This is the only required parameter, but there are additional optional settings you can further configure - see the next step.
 
 ## Step 2: Configuration - Server
 **General settings**
@@ -50,11 +68,11 @@ General settings go under `"main"` in the `configuration.json`.  You need to pro
 {
   "main":{
     "openai_api_key": <your-openai-api-key>,
-    "llm_model": <model-to-use>, # https://platform.openai.com/docs/models
-    "llm_system_prompt": <system-prompt>, # Default system prompt that is applied to all requests. TTMG Conversation will overwrite it, so you usually don't need it.
-    "max_completion_tokens": 400, # Additional model settings
-    "temperature": 1.0, # Additional model settings
-    "top_p": 1.0, # Additional model settings
+    "llm_model": <model-to-use>, # https://platform.openai.com/docs/models, TTMG Conversation will overwrite it
+    "llm_system_prompt": <system-prompt>, # Default system prompt that is applied to all requests. TTMG Conversation will overwrite it, so you usually don't need it
+    "max_completion_tokens": 400, # Additional model settings, TTMG Conversation will overwrite it
+    "temperature": 1.0, # Additional model settings, TTMG Conversation will overwrite it
+    "top_p": 1.0, # Additional model settings, TTMG Conversation will overwrite it
     "tts_engine": <selected-tts-engine>, # Selected TTS engine
     "host": <service-host>, # Host to serve 
     "port": <service-port> # Port to serve
@@ -134,17 +152,17 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 
 ## Step 3: Installation - Home Assistant
 
-Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) and [TTMG TTS](https://github.com/eslavnov/ttmg_tts). You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
+Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) and [TTMG TTS](https://github.com/eslavnov/ttmg_tts) integrations. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
 
 ## Step 4: Configuration - Home Assistant
-Provided that you have already installed TTMG Conversation and TTMG TTS integrations, then in Home Assistant:
+Once you have installed TTMG Conversation and TTMG TTS integrations, then in Home Assistant:
 1. Go to Settings => Voice Assistant
 2. Select the assistant you want to use with TTMG
 3. Set the Conversation agent and Text-to-speech to TTMG components
 ![Logo](assets/hass_settings.png)
 
 
-Now this assistant is talking to TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries - your HAVPE devices will work great - set them up in the next step!
+Now this assistant is talking to TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries: your HAVPE devices will work great - set them up in the next step!
 
 ##  Step 5: Configuration - HAVPE devices
 This is the final step - now we are going to fix/break some things in your HAVPE firmware to make it work with TTMG Server. 
@@ -154,8 +172,8 @@ Each HAVPE device needs to be set up individually, but it's a one-time operation
 2. Run `python generate_esphome_config.py`. It will ask you for the `device_id` and TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
     - Increase the default timeout to 15s (not really needed, but a good safety net in case LLM takes a long time to start generating a response for some reason)
     - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to TTMG Server.
-3. The script will output a path to the folder with customs components for your particular HAVPE device.
-4. Add the following to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
+3. The script will output a path to the folder with patched components for your particular HAVPE device.
+4. Add the following codeblock to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
 ```
 external_components:
   - source:
