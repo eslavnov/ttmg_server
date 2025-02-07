@@ -11,6 +11,8 @@ Let's say you are using a LLM in your pipeline and you try to announce via a TTS
 
 *You send a request to the LLM => it takes 10 seconds to generate the output text => you will NOT get any response because there is a **5 second timeout** in HAVPE devices; in the HAVPE logs you will see `“HTTP_CLIENT: Connection timed out before data was ready!”`.*
 
+Even if you would manually increase the HAVPE timeout, it's still not ideal as you would have to wait 30 seconds for LLM and TTS to finish processing before getting any audio back.
+
 ## Our approach
 
 This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 30 seconds to get a response. The flow would look like:
