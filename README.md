@@ -51,11 +51,11 @@ General settings go under `"main"` in the `configuration.json`.  You need to pro
 {
   "main":{
     "openai_api_key": <your-openai-api-key>,
-    "llm_model": <model-to-use>, # https://platform.openai.com/docs/models
+    "llm_model": <model-to-use>, # https://platform.openai.com/docs/models, TTMG Conversation will overwrite it
     "llm_system_prompt": <system-prompt>, # Default system prompt that is applied to all requests. TTMG Conversation will overwrite it, so you usually don't need it.
-    "max_completion_tokens": 400, # Additional model settings
-    "temperature": 1.0, # Additional model settings
-    "top_p": 1.0, # Additional model settings
+    "max_completion_tokens": 400, # Additional model settings, TTMG Conversation will overwrite it. 
+    "temperature": 1.0, # Additional model settings, TTMG Conversation will overwrite it. 
+    "top_p": 1.0, # Additional model settings, TTMG Conversation will overwrite it. 
     "tts_engine": <selected-tts-engine>, # Selected TTS engine
     "host": <service-host>, # Host to serve 
     "port": <service-port> # Port to serve
