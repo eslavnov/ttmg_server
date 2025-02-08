@@ -63,7 +63,7 @@ Now you can set everything up in 5 easy(-ish) steps!
 ## Step 2: Configuration - Server
 **General settings**
 
-General settings go under `"main"` in the `configuration.json`.  You need to provide only the `"openai_api_key"`, the rest have default values.
+Create a copy of `configuration_example.json` and save it as `configuration.json`. This file will store your personal settings. General settings go under `"main"` in the `configuration.json`.  You need to provide only the `"openai_api_key"`, the rest have default values.
 
 ```
 {
@@ -75,8 +75,8 @@ General settings go under `"main"` in the `configuration.json`.  You need to pro
     "temperature": 1.0, # Additional model settings, TTMG Conversation will overwrite it
     "top_p": 1.0, # Additional model settings, TTMG Conversation will overwrite it
     "tts_engine": <selected-tts-engine>, # Selected TTS engine
-    "host": <service-host>, # Host to serve 
-    "port": <service-port> # Port to serve
+    "host": <service-host>, # Server host 
+    "port": <service-port> # Server port
   }
 }
 ```
