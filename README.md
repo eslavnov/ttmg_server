@@ -31,9 +31,9 @@ Even if you would manually [increase the HAVPE timeout](https://community.home-a
 
 ## Our approach
 
-This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 15 seconds to get a response. The flow would look like this:
+This solution streams the response of your LLM directly into your TTS engine of choice, allowing it to reply quickly even for long responses (around 3-5 seconds; your mileage might vary depending on the TTS engine/model). So now if you ask your LLM to tell you a long story, you don't have to wait 15 seconds to get a response. The flow would look like this (see [[For nerds] General flow](#for-nerds-general-flow) for more details):
 
-*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system => we immediately stream the audio => the audio stream starts a few seconds after your initial request => as more sentences are processed, they are added in real-time to the audio stream*
+*You send a request to the LLM => the response is read token by token in real time until we hit the end of a sentence => the sentence is sent to your TTS system (the audio starts a few seconds after your initial request) => as the LLM returns more sentences, they are processed by the TTS engine and added in real-time to the audio stream*
 
 ## Supported LLM/TTS engines
 
@@ -52,7 +52,7 @@ This solution streams the response of your LLM directly into your TTS engine of 
 3. Adopt your HAVPE device in ESPHome Device Builder. It will break your [automatic update notifications](https://voice-pe.home-assistant.io/guides/update/).
 4. Install [ffmpeg](https://www.ffmpeg.org/) which is required to convert audio streams for HAVPE devices. 
 
-Now you can set everything up in 5 easy(-ish) steps!
+Now you can set everything up in 5 easy(-ish) steps! [Step 1: Installation - Server](#step-1-installation---server) / [Step 2: Configuration - Server](#step-2-configuration---server) / [Step 3: Installation - Home Assistant](#step-3-installation---home-assistant) / [Step 4: Configuration - Home Assistant](#step-4-configuration---home-assistant) / [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
 
 ## Step 1: Installation - Server
 
