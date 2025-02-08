@@ -57,7 +57,7 @@ Now you can set everything up in 5 easy(-ish) steps!
 ## Step 1: Installation - Server
 
 1. Clone the repo.
-2. Run the setup script with `./setup.sh` for Unix-based systems (make sure to run `chmod +x setup.sh` first) or `start.bat` for Windows. It will create a virtual environment and install the required dependencies.
+2. Run the setup script with `./setup.sh` for Unix-based systems or `start.bat` for Windows. It will create a virtual environment and install the required dependencies.
 3. Edit `configuration.json` and add your OpenAI API key to the `main` section ([get it here](https://platform.openai.com/settings/organization/api-keys)). This is the only required parameter, but there are additional optional settings you can further configure - see the next step.
 
 ## Step 2: Configuration - Server
@@ -184,7 +184,7 @@ external_components:
 5. Install the modified config and you are done!
 
 ## Usage
-Run the main script with `./start.sh` for Unix-based systems (make sure to run `chmod +x start.sh` first) or `start.bat` for Windows. It will start a small API server (at http://0.0.0.0:8888 using the default settings). See [an example](example.service) of Unix service file to make it run automatically.
+Run the main script with `./start.sh` for Unix-based systems or `start.bat` for Windows. It will start a small API server (at http://0.0.0.0:8888 using the default settings). See [an example](example.service) of Unix service file to make it run automatically.
 
 Now ask your HAVPE device to tell you a long story and see how it goes!
 
