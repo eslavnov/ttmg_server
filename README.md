@@ -15,8 +15,9 @@ Streams LLM's output directly into TTS systems in real-time, improving your expe
     * [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
 * [Usage](#usage)
 * [Known issues](#known-issues)
-* [Endpoints](#endpoints)
 * [Change log](#change-log)
+* [[For nerds] Endpoints](#for-nerds-endpoints)
+* [[For nerds] General flow](#for-nerds-general-flow)
 
 ## What is the problem?
 
@@ -195,15 +196,6 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 2. For now, the logic for splitting the stream into sentences is very rudimental, so sentences like "What a nice day, Mr. Smith!" will be parsed as two sentences: ["What a nice day, Mr.", "Smith!"]. This might result in some weird pauses/strange tempo when this happens. Is this fixable? Yes! Will I fix it (soon)? I dunno!
 3. The text is sent to TTS systems sentence-by-sentence, so TTS has no awareness of the surrounding context. Usually it's not a problem, but sometimes it might affect the intonations.
 
-## Endpoints
-All the endpoints are internal and provided for information purposes only. You don't need to use any of them.
-
-1. `/preload/{client_id}` (POST) - Accepts JSON {"messages", "tools", "model", "max_completion_tokens", "top_p" and "temperature"}. Used by TTMG Conversation.
-2. `/preload-text/{client_id}` (POST) - Accepts JSON {"text": "..."}. Used to pass the text to `/tts_say` endpoint.
-3. `/tts_say/{client_id}.flac` (GET) - Triggers TTS and returns flac audio for a text preloaded  via  `/preload-text/{client_id}`.
-4. `/play/{client_id}.flac` (GET) - Triggers LLM+TTS and returns flac audio for a prompt and model settings preloaded via `/preload/{client_id}`.
-5. `/history/{client_id}` (GET) - Returns LLM conversation history for a client.
-6. `/write_history/{client_id}` (POST) - Writes LLM conversation history for a client.
 
 ## Change log
 
@@ -235,3 +227,16 @@ All the endpoints are internal and provided for information purposes only. You d
 
 ### v0.0.1
 - Initial commit
+
+## [For nerds] Endpoints
+All the endpoints are internal and provided for information purposes only. You don't need to use any of them.
+
+1. `/preload/{client_id}` (POST) - Accepts JSON {"messages", "tools", "model", "max_completion_tokens", "top_p" and "temperature"}. Used by TTMG Conversation.
+2. `/preload-text/{client_id}` (POST) - Accepts JSON {"text": "..."}. Used to pass the text to `/tts_say` endpoint.
+3. `/tts_say/{client_id}.flac` (GET) - Triggers TTS and returns flac audio for a text preloaded  via  `/preload-text/{client_id}`.
+4. `/play/{client_id}.flac` (GET) - Triggers LLM+TTS and returns flac audio for a prompt and model settings preloaded via `/preload/{client_id}`.
+5. `/history/{client_id}` (GET) - Returns LLM conversation history for a client.
+6. `/write_history/{client_id}` (POST) - Writes LLM conversation history for a client.
+
+## [For nerds] General flow
+![Logo](assets/flow.png)
