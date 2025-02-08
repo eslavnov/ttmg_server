@@ -9,9 +9,11 @@ Type=simple
 
 WorkingDirectory=/home/homeassistant/ttmg_server/
 ExecStart=bash ./start.sh
-TimeoutStopSec=20
-KillMode=process
-Restart=on-failure
+TimeoutStopSec=5
+KillMode=control-group
+Restart=always
+KillSignal=SIGTERM
+Type=simple
 
 [Install]
 WantedBy=multi-user.target
