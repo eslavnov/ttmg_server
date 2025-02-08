@@ -160,7 +160,7 @@ Once you have installed TTMG Conversation and TTMG TTS integrations, then in Hom
 1. Go to Settings => Voice Assistant
 2. Select the assistant you want to use with TTMG
 3. Set the Conversation agent and Text-to-speech to TTMG components
-![Logo](assets/hass_settings.png)
+   ![HASS-settings](assets/hass_settings.png)
 
 
 Now this assistant is talking to TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries: your HAVPE devices will work great - set them up in the next step!
@@ -239,4 +239,4 @@ All the endpoints are internal and provided for information purposes only. You d
 6. `/write_history/{client_id}` (POST) - Writes LLM conversation history for a client.
 
 ## [For nerds] General flow
-![Logo](assets/flow.png)
+![Flow](assets/flow.png)
