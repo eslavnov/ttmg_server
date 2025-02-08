@@ -192,16 +192,16 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 1. What breaks:
     - The custom firmware breaks TTS for other assistants on that device, because it overwrites the output url to TTMG Server.
     - TTMG integrations do not work with HASS web conversations. Probably not fixable?
-    - Debug in HASS will not produce any meaningful data since TTMG Server handles everything.
+    - Debugging in HASS will not produce any meaningful data since TTMG Server handles everything.
 2. For now, the logic for splitting the stream into sentences is very rudimental, so sentences like "What a nice day, Mr. Smith!" will be parsed as two sentences: ["What a nice day, Mr.", "Smith!"]. This might result in some weird pauses/strange tempo when this happens. Is this fixable? Yes! Will I fix it (soon)? I dunno!
-3. The text is sent to TTS systems sentence-by-sentence, so TTS has no awareness of the surrounding context. Usually it's not a problem, but sometimes it might affect the intonations.
+3. The text is sent to TTS systems sentence-by-sentence, so TTS has no awareness of the surrounding context. Usually, it's not a problem, but sometimes it might affect the intonation.
 
 
 ## Change log
 
 ### v1.0.0
-**Added**
-- Waaaaaay too much stuff to mention, see the new README.md!
+**Changed**
+- Complete rewrite of the app to support native streaming to HAVPE devices, see the new README.md!
 
 ### v0.0.6
 **Added**
