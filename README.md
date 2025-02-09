@@ -184,7 +184,7 @@ external_components:
 5. Install the modified config and you are done!
 
 ## Usage
-Run the main script with `./start.sh` for Unix-based systems or `start.bat` for Windows. It will start a small API server (at http://0.0.0.0:8888 using the default settings). See [an example](example.service) of Unix service file to make it run automatically.
+Run the main script with `./start.sh` for Unix-based systems or `start.bat` for Windows. It will start a small API server (at http://0.0.0.0:8888 using the default settings). See [an example](configuration_examples/example.service) of a Unix systemd service to make it run automatically.
 
 Now ask your HAVPE device to tell you a long story and see how it goes!
 
