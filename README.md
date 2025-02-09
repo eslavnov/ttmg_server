@@ -202,7 +202,7 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 ### v1.0.1
 **Changed**
 - Minor code refactoring for readability 
-- Updated README.md!
+- Updated README.md
 
 ### v1.0.0
 **Changed**
