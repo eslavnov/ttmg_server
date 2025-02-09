@@ -8,11 +8,11 @@ Welcome to **Talk To Me Goose**! This tool streams your LLM's (Large Language Mo
 * [Our approach](#our-approach)
 * [Supported LLM/TTS engines](#supported-llmtts-engines)
 * [Getting started](#getting-started)
-    * [Step 1: Installation - Server](#step-1-installation---server)
-    * [Step 2: Configuration - Server](#step-2-configuration---server)
-    * [Step 3: Installation - Home Assistant](#step-3-installation---home-assistant)
-    * [Step 4: Configuration - Home Assistant](#step-4-configuration---home-assistant)
-    * [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
+    * [Step 1: Server Installation](#step-1-server-installation)
+    * [Step 2: Server Configuration](#step-2-server-configuration)
+    * [Step 3: Home Assistant Installation](#step-3-home-assistant-installation)
+    * [Step 4: Home Assistant Configuration](#step-4-home-assistant-configuration)
+    * [Step 5: HAVPE Devices Configuration](#step-5-havpe-devices-configuration)
 * [Usage](#usage)
 * [Known issues](#known-issues)
 * [Change log](#change-log)
@@ -54,19 +54,24 @@ The result: fast responses with no waiting, even for long stories!
 
 ## Getting started
 1. Check the [Known issues](#known-issues).
-2. Install [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) - you can do this as a Home Assistant addon or separately, whichever you prefer.
-3. Adopt your HAVPE device in ESPHome Device Builder (note: it will *break* your [automatic update notifications](https://voice-pe.home-assistant.io/guides/update/)).
-4. Install [ffmpeg](https://www.ffmpeg.org/) - required for audio stream conversion.
+2. Install [ffmpeg](https://www.ffmpeg.org/) - required for audio stream conversion.
+3. Install [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) - you can do this as a Home Assistant addon or separately, whichever you prefer.
+4. Adopt your HAVPE device in ESPHome Device Builder (note: it will *break* your [automatic update notifications](https://voice-pe.home-assistant.io/guides/update/)).
 
-Now you can set everything up in 5 easy(-ish) steps! [Step 1: Installation - Server](#step-1-installation---server) / [Step 2: Configuration - Server](#step-2-configuration---server) / [Step 3: Installation - Home Assistant](#step-3-installation---home-assistant) / [Step 4: Configuration - Home Assistant](#step-4-configuration---home-assistant) / [Step 5: Configuration - HAVPE devices](#step-5-configuration---havpe-devices)
+Now you can set everything up in 5 easy(-ish) steps! Follow the steps below to:
+1. Install TTMG Server
+2. Configure TTMG Server
+3. Install Home Assistant integrations
+4. Configure Home Assistant to work with TTMG
+5. Configure your Home Assistant Voice Preview Edition (HAVPE) device(s) to work with TTMG
 
-## Step 1: Installation - Server
+## Step 1: Server Installation
 
 1. Clone the repo.
 2. Run the setup script with `./setup.sh` for Unix-based systems or `start.bat` for Windows. It will create a virtual environment and install the required dependencies.
 3. Edit `configuration.json` and add your OpenAI API key to the `main` section ([get it here](https://platform.openai.com/settings/organization/api-keys)). This is the only required parameter, but there are additional optional settings you can further configure - see the next step.
 
-## Step 2: Configuration - Server
+## Step 2: Server Configuration
 **General settings**
 
 Create a copy of `configuration_example.json` and save it as `configuration.json`. This file will store your personal settings. General settings go under `"main"` in the `configuration.json`.  You need to provide only the `"openai_api_key"`, the rest have default values.
@@ -157,11 +162,11 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_piper.json` for all supported options.
 
 
-## Step 3: Installation - Home Assistant
+## Step 3: Home Assistant Installation
 
 Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) and [TTMG TTS](https://github.com/eslavnov/ttmg_tts) integrations. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
 
-## Step 4: Configuration - Home Assistant
+## Step 4: Home Assistant Configuration
 Once you have installed TTMG Conversation and TTMG TTS integrations, then in Home Assistant:
 1. Go to Settings => Voice Assistant
 2. Select the assistant you want to use with TTMG
@@ -171,8 +176,8 @@ Once you have installed TTMG Conversation and TTMG TTS integrations, then in Hom
 
 Now this assistant is talking to TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries: your HAVPE devices will work great - set them up in the next step!
 
-##  Step 5: Configuration - HAVPE devices
-The final step: let's get your HAVPE devices talking to TTMG Server.
+##  Step 5: HAVPE devices Configuration
+The final step: let's get your HAVPE devices talking to the TTMG Server.
 
 Each HAVPE device needs its own configuration. Don't worry, it's a one-time thing:
 1. Get your `device_id` from home assistant. Go to Automations, create a new one, select device as a trigger, choose your HAVPE device and then switch to yaml view to get it. Don't save the automation, you just need to find out the `device_id`.
