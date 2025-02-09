@@ -1,16 +1,21 @@
+# OpenAI
+import openai
+
+# Google cloud
 from google.api_core.exceptions import GoogleAPIError
 from google.cloud import texttospeech
-import openai
-from elevenlabs.client import ElevenLabs
-import wave
 
+# ElevenLabs
+from elevenlabs.client import ElevenLabs
+
+# Wyoming-piper
+import asyncio
+import io
 from typing import AsyncGenerator
 from wyoming.client import AsyncTcpClient
 from wyoming.audio import AudioChunk, AudioStop
 from wyoming.tts import Synthesize, SynthesizeVoice
-import io
-import asyncio
-import socket
+import wave
 
 async def tts_stream_google(sentence: str, credentials_path: str, name: str, language_code: str, gender: str, logger):
     """Calls Google Cloud TTS and streams back audio."""

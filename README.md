@@ -199,6 +199,11 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 
 ## Change log
 
+### v1.0.1
+**Changed**
+- Minor code refactoring for readability 
+- Updated README.md
+
 ### v1.0.0
 **Changed**
 - Complete rewrite of the app to support native streaming to HAVPE devices, see the new README.md!
@@ -229,14 +234,16 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 - Initial commit
 
 ## [For nerds] Endpoints
-All the endpoints are internal and provided for information purposes only. You don't need to use any of them.
+Most of the endpoints are used by TTMG components and usually you don't need to call them directly (marked as [Internal]). Instead use [External] ones for the best experience.
 
-1. `/preload/{client_id}` (POST) - Accepts JSON {"messages", "tools", "model", "max_completion_tokens", "top_p" and "temperature"}. Used by TTMG Conversation.
-2. `/preload-text/{client_id}` (POST) - Accepts JSON {"text": "..."}. Used to pass the text to `/tts_say` endpoint.
-3. `/tts_say/{client_id}.flac` (GET) - Triggers TTS and returns flac audio for a text preloaded  via  `/preload-text/{client_id}`.
-4. `/play/{client_id}.flac` (GET) - Triggers LLM+TTS and returns flac audio for a prompt and model settings preloaded via `/preload/{client_id}`.
-5. `/history/{client_id}` (GET) - Returns LLM conversation history for a client.
-6. `/write_history/{client_id}` (POST) - Writes LLM conversation history for a client.
+1. [Internal] `/preload/{client_id}` (POST) - Accepts JSON {"messages", "tools", "model", "max_completion_tokens", "top_p" and "temperature"}. Used by TTMG Conversation and by internal TTMG Server logic. It is not recommended to call it unless you know what you are doing.
+2. [Internal] `/history/{client_id}` (GET) - Returns LLM conversation history for a client.
+3. [Internal] `/write_history/{client_id}` (POST) - Writes LLM conversation history for a client.
+4. [External] `/preload-text/{client_id}` (POST) - Accepts JSON {"text": "..."}. Passes the text to `/tts_say` endpoint. Use it if you want to send a long text directly to the TTS engine.
+5. [External] `/tts_say/{client_id}.flac` (GET) - Triggers TTS and returns flac audio for a text preloaded  via  `/preload-text/{client_id}`. Will not call your LLM, it will just announce the text.
+4. [Internal/External] `/play/{client_id}.flac` (GET) - Triggers LLM+TTS and returns flac audio. 
+    - When the prompt and model settings were preloaded via `/preload/{client_id}`, it acts in an [Internal] mode. 
+    - When called directly with a prompt like `/play/{does-not-matter}.flac?prompt=Tell+me+a+story+about+home+assistant`, uses that prompt and llm settings from your `configuration.json`.
 
 ## [For nerds] General flow
 ![Flow](assets/flow.png)
