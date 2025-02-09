@@ -5,13 +5,13 @@ import re
 
 # Prompt user for inputs
 DEVICE_ID = input("Enter your HAVPE device_id: ").strip()
-HOST = input("Enter TTMG Server host (e.g., 127.0.0.1): ").strip()
+HOST = input("Enter TTMG Server host (e.g., 192.168.201.255): ").strip()
 PORT = input("Enter TTMG Server port (e.g., 8888): ").strip()
 
 # Define variables
 REPO_URL = "https://github.com/esphome/home-assistant-voice-pe"
 CLONE_DIR = "home-assistant-voice-pe"
-BASE_DEST_DIR = "esphome_config/custom_components"  # Change this to the actual base destination
+BASE_DEST_DIR = "esphome_config/custom_components"
 DEST_DIR = os.path.join(BASE_DEST_DIR, DEVICE_ID)
 
 NABU_DIR_SOURCE = os.path.join(CLONE_DIR, "esphome/components/nabu")
@@ -42,12 +42,12 @@ except subprocess.CalledProcessError:
 shutil.copytree(NABU_DIR_SOURCE, NABU_DIR_DEST, dirs_exist_ok=True)
 shutil.copytree(VA_DIR_SOURCE, VA_DIR_DEST, dirs_exist_ok=True)
 
-# 4. Modify `audio_reader.cpp`
+# 4. Increase tiimeout in `audio_reader.cpp`
 AUDIO_READER_FILE = os.path.join(NABU_DIR_DEST, "audio_reader.cpp")
 
 print(f"Checking path: {AUDIO_READER_FILE}")
 if os.path.isfile(AUDIO_READER_FILE):
-    print("Modifying timeout in audio_reader.cpp...")
+    print("Increasing timeout in audio_reader.cpp...")
     with open(AUDIO_READER_FILE, "r") as file:
         content = file.read()
     
@@ -95,4 +95,4 @@ else:
 # Get the absolute path of the current working directory
 ABSOLUTE_PATH = os.getcwd()
 
-print(f"Script execution completed successfully! Files are modified at: {ABSOLUTE_PATH}/{BASE_DEST_DIR}/{DEVICE_ID}/")
+print(f"All done! ESPHome custom components for device {DEVICE_ID} are at: \n{ABSOLUTE_PATH}/{BASE_DEST_DIR}/{DEVICE_ID}/")

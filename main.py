@@ -5,10 +5,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import StreamingResponse, JSONResponse
 import json
 import logging
-
 import openai
-from audio_processing import create_persistent_flac_encoder, feed_encoder, stream_flac_from_audio_source
-from tts_streaming import tts_stream_google, tts_stream_openai, tts_stream_elevenlabs, tts_stream
+
+from helpers.audio_processing import create_persistent_flac_encoder, feed_encoder, stream_flac_from_audio_source
+from helpers.tts_streaming import tts_stream_google, tts_stream_openai, tts_stream_elevenlabs, tts_stream
 
 # Global config and client store
 config = {}
@@ -18,7 +18,7 @@ store = {}
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s %(asctime)s: %(message)s",
-    datefmt="%H:%M:%S"  # Format for the timestamp
+    datefmt="%H:%M:%S"
 )
 logger = logging.getLogger()
 
@@ -50,7 +50,7 @@ def get_client_events(client_id: str):
         client_store["preload_event"] = Event()
     if "play_event" not in client_store:
         client_store["play_event"] = Event()
-    store_put(client_id, client_store)  # update store if new events were created
+    store_put(client_id, client_store)
     return client_store["preload_event"], client_store["play_event"]
   
 def config_get():
@@ -148,23 +148,32 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
     
     max_iterations = 10
     iteration_count = 0
+    
+    # The loop below:
+    # 1. Calls LLM with the provided prompt
+    # 2. If it returns tools calls, passes them to HASS and gets the response.
+    # 3. Appends tools calls response to the message history and calls LLM again
+    # This continues until the LLM returns text with no tool calls.
+    # It will run once for simple requests and several times (up to 10) for tool calls.
     while iteration_count < max_iterations:
         tool_calls = {}  # Dictionary to store tool calls by index
         sentence = ""
         full_response = ""
         client_store = store_get(client_id)
         messages = client_store["messages"]
-        logger.info("CALLING LLM") #, json.dumps(messages[-2:]))
+        logger.info("CALLING LLM")
         
-        # fail safe in case we did not get tool_call response and try to issue a new command
+        # Fail-safe in case we did not get tool_call response and try to issue a new command.
+        # This might happen if TTMG Server or HASS crashes mid-response for some reason.
+        # The happy flow never hits this code block.
         if "tool_calls" in messages[-2] and messages[-1]['role']=='user':
-          logger.info("FAILSAFE TRIGGERED, IT'S OK")
+          logger.info("FAILSAFE TRIGGERED, FIXING HISTORY (DO NOT WORRY)")
           client_store["messages"].pop(-2)
           store_put(client_id, client_store)
-  
+
         try:
             completion = client.chat.completions.create(
-                model=llm_config["model"],
+                model=llm_config["model"] if llm_config else cfg["main"]["llm_model"],
                 messages=messages,
                 tools=json.loads(llm_config["tools"]) if llm_config and "tools" in llm_config else None,
                 temperature=llm_config["temperature"] if llm_config and "tools" in llm_config else cfg["main"]["temperature"],
@@ -187,7 +196,6 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
                 # Handle streaming text
                 new_content = delta.content
                 if new_content:
-                    # print("Getting LLM response...")
                     logger.info("Getting LLM response...")
                     sentence += new_content
                     full_response += new_content
@@ -223,7 +231,7 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
         if tool_calls:
             for tcall in tool_calls.values():
                 try:
-                    # Transform to your desired structure
+                    # Modify the tool calls to the required standard
                     tcall["function"] = {
                         "name": tcall["name"],
                         "arguments": tcall["arguments"],
@@ -232,33 +240,29 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
                     del tcall["arguments"]
                     del tcall["name"]
                 except json.JSONDecodeError:
-                    print(
-                        f"Error parsing JSON for tool (index={tcall}): {tcall['arguments']}"
-                    )
+                    logger.error(f"Error parsing JSON for tool (index={tcall}): {tcall['arguments']}")
 
             final_tool_calls = list(tool_calls.values())
             messages.append({"role": "assistant", "tool_calls": final_tool_calls})
             
-            # store the messages and tool_calls
+            # Store the messages and tool_calls
             client_store = store_get(client_id)
             client_store["messages"] = messages
             client_store["tool_commands"] = final_tool_calls
             store_put(client_id, client_store)
             
             # We signal that we are done and unblock the /preload endpoint.
-            # The tool_calls are returned to the Home Assistant integration.
-            # Now HASS can run them and provide a response.
-            # The integration with unblock play_event once it has the response from the tool calls.
+            # This will return tool_calls to TTMG Conversation integration for Home Assistant.
             logger.info("GOT TOOLS RESPONSE, RUNNING A PROMPT TO GENERATE SPEECH RESPONSE")
             preload_event, play_event = get_client_events(client_id)
             preload_event.set()
-
+            
+            # Now we wait for TTMG Conversation to call the tools
+            # and append the response to the message history.
             await play_event.wait()
-            play_event.clear()  # Clear the event for future use
+            play_event.clear()
 
-            # At this point, 'messages' may have been modified externally,
-            # so loop back and call the API again with updated 'messages'.
-            # This will allow OpenAI to generate text based on the tool call responses.
+            # With the tool calls response, we can re-run LLM to generate a nice output text.
         else:
             # No tool calls -> we can stop here
             break
@@ -267,7 +271,7 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
 async def audio_streamer(text: str, cfg: dict, client_id: str, llm_config=None, file_path: str = "/dev/null"):
     """
     Takes the user text, splits into sentences, calls TTS for each one,
-    and yields the raw MP3 data in chunks. Also saves to 'file_path' (if desired).
+    and yields the raw audio data in chunks. Also saves to 'file_path' (if desired).
     """
     async with aiofiles.open(file_path, 'wb') as f:
         for sentence in sentence_generator(text):
@@ -333,7 +337,7 @@ async def preload_llm_config(client_id: str, request: Request):
     if not (messages or tools or max_completion_tokens or top_p or temperature or model):
         raise HTTPException(status_code=400, detail='"messages", "tools", "model" and its params are required')
 
-    logger.info(f"NEW MESSAGE: {messages[-1]['content']}")
+    logger.info(f"GOT USER MESSAGE: {messages[-1]['content']}")
 
     client_store = store_get(client_id)
     client_store["messages"] = messages
@@ -343,13 +347,12 @@ async def preload_llm_config(client_id: str, request: Request):
     # Now we have our llm config with tools and messages ready. 
     # We wait for the /play endpoint to trigger LLM pipeline with this config.
     # It will call preload_event.set() when it has the full response.
-    # get or create the events for this client
     preload_event, play_event = get_client_events(client_id)
-
     await preload_event.wait()
     preload_event.clear()
     
-    # Now that we have the full response, we return the updated messages history and the tool_calls to Home Assistant.
+    # We have the full response now, so we return 
+    # the updated messages history and the tool_calls to Home Assistant.
     # This will allow it to run the tools and append the results to the messages history.
     # Updated messages will come via the /write_history endpoint.
     client_store = store_get(client_id)
@@ -368,7 +371,6 @@ async def preload_llm_config(client_id: str, request: Request):
 async def tts(client_id: str, request: Request):
     """Processes a long text through TTS sentence by sentence and returns an audio stream in real time."""
     config = config_get()
-    dummy_file_path = "/dev/null"  # Dummy file path to discard audio
     client_store = store_get(client_id)
     preloaded_text = client_store["preloaded_text"] if "preloaded_text" in client_store else None
 
