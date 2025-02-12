@@ -41,6 +41,7 @@ Even if you manually [increase the timeout](https://community.home-assistant.io/
 
 The result: fast responses with no waiting, even for long stories! Tool calls, message history and local conversation agent's responses are supported, too!
 
+
 ## Supported LLM/TTS engines
 
 **LLMs:**
