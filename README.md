@@ -75,7 +75,7 @@ Now you can set everything up in 5 easy(-ish) steps! Follow the steps below to:
 ## Step 2: Server Configuration
 **General settings**
 
-Create a copy of `configuration_example.json` and save it as `configuration.json`. This file will store your personal settings. General settings go under `"main"` in the `configuration.json`.  You need to provide only the `"openai_api_key"`, the rest have default values.
+General settings go under `"main"` in the `configuration.json`.  You need to provide only the `"openai_api_key"`, the rest have default values.
 
 ```
 {
