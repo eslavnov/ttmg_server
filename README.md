@@ -39,7 +39,8 @@ Even if you manually [increase the timeout](https://community.home-assistant.io/
 2. The LLM responds token by token, which is passed to the TTS engine as soon as it hits a complete sentence.
 3. The audio begins almost immediately, and as more sentences arrive, they are added in real-time.
 
-The result: fast responses with no waiting, even for long stories!
+The result: fast responses with no waiting, even for long stories! Tool calls, message history and local conversation agent's responses are supported, too!
+
 
 ## Supported LLM/TTS engines
 
@@ -210,6 +211,10 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
    - TTS engines have no idea about the context - they process one sentence at a time. This sometimes affects intonation but usually isn’t noticeable.
 
 ## Change log
+
+### v1.0.2
+**Added**
+- Local conversation agent's responses are now working too! Make sure to update your TTMG TTS integration! 
 
 ### v1.0.1
 **Changed**

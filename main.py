@@ -391,17 +391,34 @@ async def play_flac(client_id: str, request: Request):
     Otherwise if llm config (tools + messages) was preloaded via /preload, we use that.
     """
     config = config_get()
-
-    # Use prompt query param, otherwise use provided llm config
-    client_store = store_get(client_id)
-    preloaded_llm_config = client_store["preloaded_llm_config"] if "preloaded_llm_config" in client_store else None
-    prompt = request.query_params.get("prompt", None)
-    if not preloaded_llm_config and not prompt:
-        prompt ="Say you have received no prompt."
-    llm_config =None if prompt else preloaded_llm_config
     
-    # Call a function to run LLM-TTS pipeline that returns a flac stream
-    flac_stream = stream_flac_from_audio_source(prompt_audio_streamer, prompt, config, client_id, llm_config)
+    # Get llm config and preloaded text
+    client_store = store_get(client_id)
+    hass_store = store_get("ttmg_tts")
+    preloaded_llm_config = client_store["preloaded_llm_config"] if "preloaded_llm_config" in client_store else None
+    preloaded_text = hass_store["preloaded_text"] if "preloaded_text" in hass_store else None
+    prompt = request.query_params.get("prompt", None)
+
+    # Bypass the LLM and call the TTS engine directly if we have preloaded text
+    # (for example, provided by TTMG TTS as a local agent response)
+    if preloaded_text:
+      # Clear the preloaded_text
+      hass_store["preloaded_text"]= None
+      store_put("ttmg_tts", hass_store)
+      #  Call a function to run a TTS pipeline that returns a flac stream
+      flac_stream = stream_flac_from_audio_source(audio_streamer, preloaded_text, config, client_id)
+    # Handles the regular flow where we want to call the LLM 
+    # and pipe the response into the TTS engine
+    else:
+      # Use prompt query param, otherwise use provided llm config
+      if not preloaded_llm_config and not prompt:
+          prompt ="Say you have received no prompt."
+      llm_config =None if prompt else preloaded_llm_config
+      # Clear the preloaded_llm config
+      client_store["preloaded_llm_config"]= None
+      store_put(client_id, client_store)
+      # Call a function to run a LLM-TTS pipeline that returns a flac stream
+      flac_stream = stream_flac_from_audio_source(prompt_audio_streamer, prompt, config, client_id, llm_config)
 
     return StreamingResponse(
         flac_stream,
