@@ -179,7 +179,7 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 
 ## Step 3: Home Assistant Installation
 
-Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) integration for Home Assistant. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
+Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) integration for Home Assistant. You will need to provide the url to your TTMG Server in the format of `http://<TTMG-Server-ip->:<port>`.
 
 ## Step 4: Home Assistant Configuration
 Once you have installed TTMG Conversation integration, then in Home Assistant:
@@ -189,16 +189,16 @@ Once you have installed TTMG Conversation integration, then in Home Assistant:
    ![HASS-settings](assets/hass_settings.png)
 
 
-Now this assistant is talking to TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries: your HAVPE devices will work great - set them up in the next step!
+Now this assistant is talking to the TTMG Server! You can try to start a conversation in HASS with it and you will get back "Processing your request, please wait..." - this is OK! Unfortunately, integrating real-time streaming breaks this, but no worries: your HAVPE devices will work great - set them up in the next step!
 
 ##  Step 5: HAVPE devices Configuration
 The final step: let's get your HAVPE devices talking to the TTMG Server.
 
 Each HAVPE device needs its own configuration. Don't worry, it's a one-time thing:
-1. Get your `device_id` from home assistant. Go to Automations, create a new one, select device as a trigger, choose your HAVPE device and then switch to yaml view to get it. Don't save the automation, you just need to find out the `device_id`.
-2. Run `python generate_esphome_config.py`. It will ask you for the `device_id` and TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
+1. Get your `device_id` from home assistant. Go to Automations, create a new one, select "device" as a trigger, choose your HAVPE device and then switch to the yaml view to get it. Don't save the automation, you just need to find out the `device_id`.
+2. Run `python generate_esphome_config.py`. It will ask you for the `device_id` and the TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
     - Increase the default timeout to 15s (not really needed, but a good safety net in case LLM takes a long time to start generating a response for some reason)
-    - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to TTMG Server.
+    - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to the TTMG Server.
 3. The script will output a path to the folder with patched components for your particular HAVPE device.
 4. Add the following code block to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
 ```
@@ -218,7 +218,7 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 1. **Breaking Changes**
    - The custom firmware overwrites TTS URLs, so your HAVPE device will not work with other voice assistants, but you can still use other TTS engines to announce stuff on your HAVPE devices.
    - TTMG integration doesn't play well with HASS web conversations (probably not fixable).
-   - Debugging in HASS won’t show meaningful data since everything is handled by TTMG Server.
+   - Debugging in HASS won’t show meaningful data since everything is handled by the TTMG Server.
 2. **Sentence Parsing:**
    - The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses. 
 3. **Context-Awareness:**
