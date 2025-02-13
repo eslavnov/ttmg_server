@@ -264,7 +264,8 @@ Most of the endpoints are used by TTMG components and usually you don't need to 
 4. [External] `/preload-text/{client_id}` (POST) - Accepts JSON {"text": "..."}. Passes the text to `/tts_say` endpoint. Use it if you want to send a long text directly to the TTS engine.
 5. [External] `/tts_say/{client_id}.flac` (GET) - Triggers TTS and returns flac audio for a text preloaded  via  `/preload-text/{client_id}`. Will not call your LLM, it will just announce the text.
 4. [Internal/External] `/play/{client_id}.flac` (GET) - Triggers LLM+TTS and returns flac audio. 
-    - When the prompt and model settings were preloaded via `/preload/{client_id}`, it acts in an [Internal] mode. 
+    - When the prompt and model settings were preloaded via `/preload/{client_id}`, it acts in an [Internal] mode and runs the LLM-TTS pipeline.
+    - When the text was preloaded via `/preload-text/ttmg_tts`, it acts in an [Internal] mode and runs the TTS pipeline directly, skipping the LLM step (used for announcing local agent responses, for example)
     - When called directly with a prompt like `/play/{does-not-matter}.flac?prompt=Tell+me+a+story+about+home+assistant`, uses that prompt and llm settings from your `configuration.json`.
 
 ## [For nerds] General flow
