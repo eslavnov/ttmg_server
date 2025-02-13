@@ -97,25 +97,27 @@ General settings go under `"main"` in the `configuration.json`.  You need to pro
   }
 }
 ```
+<details>
+  <summary>TTS settings - OpenAI (Default)</summary>
+   
+   This engine is enabled by default. If you have already provided your OpenAI API key in the `"main"` section, you are good to go!
+   ```
+   {
+       "main": {
+         "tts_engine": "openai",
+         ...
+       },
+       "openai": {
+         <optional parameters>
+       }
+   }
+   ```
+   You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_openai.json` for all supported options.
+</details>
 
-**TTS settings - OpenAI**
-
-This engine is enabled by default. If you have already provided your OpenAI API key in the `"main"` section, you are good to go!
-```
-{
-    "main": {
-      "tts_engine": "openai",
-      ...
-    },
-    "openai": {
-      <optional parameters>
-    }
-}
-```
-You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_openai.json` for all supported options.
-
-**TTS settings - Google Cloud**
-
+<details>
+  <summary>TTS settings - Google Cloud</summary>
+   
 1. First you need to obtain a service account file from Google Cloud. Follow [these instructions](https://www.home-assistant.io/integrations/google_cloud/#obtaining-service-account-file), you need only text-to-speech.
 2. Change `tts_engine` to `google_cloud` in your `configuration.json`.
 3. Add Google Cloud settings to the `configuration.json`. Only the `"credentials_path"` is required, the rest have default values:
@@ -131,8 +133,11 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 }
 ```
 You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_google_cloud.json` for all supported options.
+</details>
 
-**TTS settings - Elevenlabs**
+<details>
+  <summary>TTS settings - Elevenlabs</summary>
+   
 1. First you need to obtain an API key from ElevenLabs. Get it [here](https://elevenlabs.io/app/settings/api-keys).
 2. Change `tts_engine` to `elevenlabs` in your `configuration.json`.
 3. Add ElevenLabs settings to the `configuration.json`. Only the `"api_key"` is required, the rest have default values:
@@ -148,10 +153,13 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 }
 ```
 You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_elevenlabs.json` for all supported options.
+</details>
 
-**TTS settings - Wyoming-piper**
+<details>
+  <summary>TTS settings - Wyoming-piper</summary>
+   
 1. Change `tts_engine` to `piper` in your `configuration.json`.
-3. Add wyoming-piper settings to the `configuration.json`. All have default values (see below):
+2. Add wyoming-piper settings to the `configuration.json`. All have default values (see below):
 ```
 {
     "main": {
@@ -167,6 +175,7 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 ```
 You can pass additional parameters in your `configuration.json`, see `configuration_examples/configuration_piper.json` for all supported options.
 
+</details>
 
 ## Step 3: Home Assistant Installation
 
