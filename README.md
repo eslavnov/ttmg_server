@@ -3,9 +3,10 @@
 
 Welcome to **Talk To Me Goose**! This tool streams your LLM's (Large Language Model) output directly into your TTS (Text-to-Speech) engine, delivering real-time responses without the long waits. Perfect for enhancing your Home Assistant Voice devices with long text-to-audio outputs.
 
-**Demo:**
+**Demos:**
 
 [![Limited-by-the-technology-of-my-time](https://img.youtube.com/vi/vHryYHMi8jI/0.jpg)](https://www.youtube.com/watch?v=vHryYHMi8jI)
+[![reddit-please](https://img.youtube.com/vi/ZKTXFBypuI0/0.jpg)](https://www.youtube.com/watch?v=ZKTXFBypuI0)
 
 **What's inside:**
 * [What is the problem?](#what-is-the-problem)
