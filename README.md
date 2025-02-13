@@ -214,7 +214,7 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 
 ### v1.0.2
 **Added**
-- Local conversation agent's responses are now working too! Make sure to update your TTMG TTS integration! 
+- Local conversation agent's responses are now working too! Make sure to update your TTMG Home Assistant integration! 
 
 ### v1.0.1
 **Changed**
