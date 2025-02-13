@@ -62,7 +62,7 @@ The result: fast responses with no waiting, even for long stories! Tool calls, m
 Now you can set everything up in 5 easy(-ish) steps! Follow the steps below to:
 1. Install TTMG Server
 2. Configure TTMG Server
-3. Install Home Assistant integrations
+3. Install Home Assistant integration
 4. Configure Home Assistant to work with TTMG
 5. Configure your Home Assistant Voice Preview Edition (HAVPE) device(s) to work with TTMG
 
@@ -165,7 +165,7 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 
 ## Step 3: Home Assistant Installation
 
-Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) and [TTMG TTS](https://github.com/eslavnov/ttmg_tts) integrations. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
+Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) integration for Home Assistant. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
 
 ## Step 4: Home Assistant Configuration
 Once you have installed TTMG Conversation and TTMG TTS integrations, then in Home Assistant:
