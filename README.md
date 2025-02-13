@@ -168,7 +168,7 @@ You can pass additional parameters in your `configuration.json`, see `configurat
 Follow the instructions to install [TTMG Conversation](https://github.com/eslavnov/ttmg_conversation) integration for Home Assistant. You will need to provide the url to your TTMG Server in a format of `http://<TTMG-Server-ip->:<port>`.
 
 ## Step 4: Home Assistant Configuration
-Once you have installed TTMG Conversation and TTMG TTS integrations, then in Home Assistant:
+Once you have installed TTMG Conversation integration, then in Home Assistant:
 1. Go to Settings => Voice Assistant
 2. Select the assistant you want to use with TTMG
 3. Set the Conversation agent and Text-to-speech to TTMG components
