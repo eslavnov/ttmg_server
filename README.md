@@ -207,9 +207,9 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 
 ## Known issues
 1. **Breaking Changes**
-   - The custom firmware overwrites TTS URLs, so your HAVPE device will not work with other assistants.
-   - TTMG integrations don't play well with HASS web conversations (probably not fixable).
-   - Debugging HASS won’t show meaningful data since everything is handled by TTMG Server.
+   - The custom firmware overwrites TTS URLs, so your HAVPE device will not work with other voice assistants, but you can still use other TTS engines to announce stuff on your HAVPE devices.
+   - TTMG integration doesn't play well with HASS web conversations (probably not fixable).
+   - Debugging in HASS won’t show meaningful data since everything is handled by TTMG Server.
 2. **Sentence Parsing:**
    - The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses. 
 3. **Context-Awareness:**
