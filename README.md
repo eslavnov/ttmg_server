@@ -87,7 +87,7 @@ Now you can set everything up in 5 easy(-ish) steps! Follow the steps below to:
 ## Step 1: Server Installation
 
 1. Clone the repo.
-2. Run the setup script with `./setup.sh` for Unix-based systems or `start.bat` for Windows. It will create a virtual environment and install the required dependencies.
+2. Run the setup script with `./setup.sh` for Unix-based systems or `start.bat` for Windows. It will create a virtual environment, install the required dependencies and create `configuration.json` to store your settings.
 3. Edit `configuration.json` and add your OpenAI API key to the `main` section ([get it here](https://platform.openai.com/settings/organization/api-keys)). This is the only required parameter, but there are additional optional settings you can further configure - see the next step.
 
 ## Step 2: Server Configuration
