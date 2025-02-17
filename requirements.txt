@@ -2,7 +2,6 @@ aiofiles==24.1.0
 elevenlabs==1.50.7
 fastapi==0.115.8
 openai==1.61.1
-protobuf==3.12.4
 uvicorn==0.34.0
 wyoming==1.6.0
 wave==0.0.2
