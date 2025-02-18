@@ -5,4 +5,4 @@ openai==1.61.1
 uvicorn==0.34.0
 wyoming==1.6.0
 wave==0.0.2
-google-api-core==2.24.1
+google-cloud-texttospeech==2.25.0
