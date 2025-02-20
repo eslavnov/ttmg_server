@@ -266,7 +266,6 @@ async def audio_streamer(text: str, cfg: dict, client_id: str, llm_config=None, 
     Takes the user text, splits into sentences, calls TTS for each one,
     and yields the raw audio data in chunks. Also saves to 'file_path' (if desired).
     """
-    print("TEXT", text)
     if text is not None and text.strip() != "":
       async with aiofiles.open(file_path, 'wb') as f:
           async for sentence in stream_sentence_generator(chunk_text(text)):
