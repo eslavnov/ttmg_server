@@ -14,10 +14,7 @@ CLONE_DIR = "home-assistant-voice-pe"
 BASE_DEST_DIR = "esphome_config/custom_components"
 DEST_DIR = os.path.join(BASE_DEST_DIR, DEVICE_ID)
 
-NABU_DIR_SOURCE = os.path.join(CLONE_DIR, "esphome/components/nabu")
 VA_DIR_SOURCE = os.path.join(CLONE_DIR, "esphome/components/voice_assistant")
-
-NABU_DIR_DEST = os.path.join(DEST_DIR, "nabu")
 VA_DIR_DEST = os.path.join(DEST_DIR, "voice_assistant")
 
 AUDIO_FILE_URL = f"http://{HOST}:{PORT}/play/{DEVICE_ID}.flac"
@@ -39,28 +36,9 @@ except subprocess.CalledProcessError:
     exit(1)
 
 # 2. Copy the required directories
-shutil.copytree(NABU_DIR_SOURCE, NABU_DIR_DEST, dirs_exist_ok=True)
 shutil.copytree(VA_DIR_SOURCE, VA_DIR_DEST, dirs_exist_ok=True)
 
-# 4. Increase tiimeout in `audio_reader.cpp`
-AUDIO_READER_FILE = os.path.join(NABU_DIR_DEST, "audio_reader.cpp")
-
-print(f"Checking path: {AUDIO_READER_FILE}")
-if os.path.isfile(AUDIO_READER_FILE):
-    print("Increasing timeout in audio_reader.cpp...")
-    with open(AUDIO_READER_FILE, "r") as file:
-        content = file.read()
-    
-    # Replace timeout value
-    content = content.replace("client_config.timeout_ms = 5000;", "client_config.timeout_ms = 15000;")
-    
-    with open(AUDIO_READER_FILE, "w") as file:
-        file.write(content)
-else:
-    print(f"File {AUDIO_READER_FILE} not found!")
-    exit(1)
-
-# 5. Modify `voice_assistant.cpp`
+# 3. Modify `voice_assistant.cpp`
 VOICE_ASSISTANT_FILE = os.path.join(VA_DIR_DEST, "voice_assistant.cpp")
 
 if os.path.isfile(VOICE_ASSISTANT_FILE):
@@ -68,6 +46,10 @@ if os.path.isfile(VOICE_ASSISTANT_FILE):
     
     with open(VOICE_ASSISTANT_FILE, "r") as file:
         content = file.read()
+        
+    # Replace timeout value
+    print("Increasing speaker-timeout")
+    content = content.replace('"speaker-timeout", 5000', '"speaker-timeout", 15000')
     
     # Regex to replace the URL assignment block
     pattern = r"""

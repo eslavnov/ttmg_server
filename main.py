@@ -6,9 +6,11 @@ from fastapi.responses import StreamingResponse, JSONResponse
 import json
 import logging
 import openai
+import os
 
 from helpers.audio_processing import create_persistent_flac_encoder, feed_encoder, stream_flac_from_audio_source
 from helpers.tts_streaming import tts_stream_google, tts_stream_openai, tts_stream_elevenlabs, tts_stream
+from helpers.sentence_parser import stream_sentence_generator, chunk_text
 
 # Global config and client store
 config = {}
@@ -157,7 +159,6 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
     # It will run once for simple requests and several times (up to 10) for tool calls.
     while iteration_count < max_iterations:
         tool_calls = {}  # Dictionary to store tool calls by index
-        sentence = ""
         full_response = ""
         client_store = store_get(client_id)
         messages = client_store["messages"]
@@ -197,12 +198,8 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
                 new_content = delta.content
                 if new_content:
                     logger.info("Getting LLM response...")
-                    sentence += new_content
                     full_response += new_content
-                    # Yield entire sentences based on punctuation
-                    if sentence.strip().endswith((".", "!", "?")):
-                        yield sentence.strip()
-                        sentence = ""  # Reset sentence buffer
+                    yield new_content
 
                 # Handle tool calls
                 if delta.tool_calls:
@@ -215,10 +212,6 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
                                 "arguments": "",
                             }
                         tool_calls[index]["arguments"] += tool_call.function.arguments
-
-        # If there was trailing text without a final punctuation, yield it
-        if sentence.strip():
-            yield sentence.strip()
 
         # Add the full response as a single message (if it has any content)
         if full_response.strip():
@@ -268,20 +261,22 @@ async def llm_stream(cfg: str, prompt: str, llm_config: dict, client_id: str):
             break
         iteration_count += 1
 
-async def audio_streamer(text: str, cfg: dict, client_id: str, llm_config=None, file_path: str = "/dev/null"):
+async def audio_streamer(text: str, cfg: dict, client_id: str, llm_config=None, file_path: str = os.devnull):
     """
     Takes the user text, splits into sentences, calls TTS for each one,
     and yields the raw audio data in chunks. Also saves to 'file_path' (if desired).
     """
-    async with aiofiles.open(file_path, 'wb') as f:
-        for sentence in sentence_generator(text):
-            if sentence.strip():
-                logger.info(f"TTS {cfg['main']['tts_engine'].upper()} => {sentence}")
-                async for audio_chunk in tts_stream(sentence, cfg, logger):
-                    await f.write(audio_chunk)
-                    yield audio_chunk
+    print("TEXT", text)
+    if text is not None and text.strip() != "":
+      async with aiofiles.open(file_path, 'wb') as f:
+          async for sentence in stream_sentence_generator(chunk_text(text)):
+              if sentence.strip():
+                  logger.info(f"TTS {cfg['main']['tts_engine'].upper()} => {sentence}")
+                  async for audio_chunk in tts_stream(sentence, cfg, logger):
+                      await f.write(audio_chunk)
+                      yield audio_chunk
     
-async def prompt_audio_streamer(prompt: str, cfg: dict, client_id: str, llm_config: dict, file_path: str = "/dev/null"):
+async def prompt_audio_streamer(prompt: str, cfg: dict, client_id: str, llm_config: dict, file_path: str = os.devnull):
   """
   Runs LLM prompt and streams the response in real time.
   Takes the streaming response, splits into sentences, calls TTS for each one,
@@ -289,15 +284,12 @@ async def prompt_audio_streamer(prompt: str, cfg: dict, client_id: str, llm_conf
   """
   collected_text = ""
   async with aiofiles.open(file_path, 'wb') as f:
-      async for chunk in llm_stream(cfg, prompt, llm_config, client_id):
-          collected_text += chunk
-          for sentence in sentence_generator(collected_text):
-              if sentence.strip() !=".":
-                logger.info(f"TTS {config['main']['tts_engine'].upper()}: {sentence}")
-                async for audio_chunk in tts_stream(sentence, cfg, logger):
-                    await f.write(audio_chunk)
-                    yield audio_chunk
-                collected_text = ""  # Clear collected_text after processing each sentence
+      async for sentence in stream_sentence_generator(llm_stream(cfg, prompt, llm_config, client_id)):
+          if sentence.strip() !=".":
+            logger.info(f"TTS {config['main']['tts_engine'].upper()}: {sentence}")
+            async for audio_chunk in tts_stream(sentence, cfg, logger):
+                await f.write(audio_chunk)
+                yield audio_chunk
   
 @app.post("/preload-text/{client_id}")
 async def preload_text(client_id: str,  request: Request):
@@ -391,7 +383,8 @@ async def play_flac(client_id: str, request: Request):
     Otherwise if llm config (tools + messages) was preloaded via /preload, we use that.
     """
     config = config_get()
-    
+    logger.info("PLAY")
+
     # Get llm config and preloaded text
     client_store = store_get(client_id)
     hass_store = store_get("ttmg_tts")
@@ -402,6 +395,7 @@ async def play_flac(client_id: str, request: Request):
     # Bypass the LLM and call the TTS engine directly if we have preloaded text
     # (for example, provided by TTMG TTS as a local agent response)
     if preloaded_text:
+      logger.info(f"YAY! TEXT: {preloaded_text}")
       # Clear the preloaded_text
       hass_store["preloaded_text"]= None
       store_put("ttmg_tts", hass_store)

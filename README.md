@@ -232,13 +232,20 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
    - The custom firmware overwrites TTS URLs, so your HAVPE device will not work with other TTS engines.
    - TTMG integration doesn't play well with HASS web conversations (not fixable until HASS natively supports text and audio streaming). Solution: don't use it with the web assistant! ¯\\_(ツ)_/¯
    - Debugging in HASS won’t show meaningful data since everything is handled by the TTMG Server.
-2. **Sentence Parsing:**
-   - The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses. 
+2. ~~**Sentence Parsing:**~~
+   - Fixed in v1.0.3: ~~The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses.~~ 
 3. **Context-Awareness:**
    - TTS engines have no idea about the context because we send one sentence at a time. This sometimes affects intonation and/or pauses between sentences, but in my testing (mostly with Google Cloud TTS) the difference is negligible.
 
 
 ## Change log
+
+### v1.0.3
+**Added**
+- New sentence parser! Just as fast as the old one, but handles titles, abbreviations and other tricky stuff correctly. No more awkward pauses!
+
+**Fixed**
+- Windows compatibility (does not use `/dev/null `anymore)
 
 ### v1.0.2
 **Added**
