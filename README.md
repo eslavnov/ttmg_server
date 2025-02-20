@@ -243,6 +243,7 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 ### v1.0.3
 **Added**
 - New sentence parser! Just as fast as the old one, but handles titles, abbreviations and other tricky stuff correctly. No more awkward pauses!
+- Update `tools/generate_esphome_config.py` to support the latest HAVPE firmware and esphome 2025.2.0.
 
 **Fixed**
 - Windows compatibility (does not use `/dev/null `anymore)
