@@ -229,7 +229,7 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 
 ## Known issues
 1. **Breaking Changes**
-   - The custom firmware overwrites TTS URLs, so you you can't use other TTS engines with the voice assistant that your HAVPE device is using. Using `tts.speak` action will still work with other TTS engines, though.
+   - The custom firmware overwrites TTS URLs, so you can't use other TTS engines with the HAVPE voice assistants. Using `tts.speak` action will still work with other TTS engines, though. See [here](https://github.com/eslavnov/ttmg_server/issues/3) for more details.
    - TTMG integration doesn't play well with HASS web conversations (not fixable until HASS natively supports text and audio streaming). Solution: don't use it with the web assistant! ¯\\_(ツ)_/¯
    - Debugging in HASS won’t show meaningful data since everything is handled by the TTMG Server.
 2. ~~**Sentence Parsing:**~~
