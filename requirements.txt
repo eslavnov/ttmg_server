@@ -7,3 +7,4 @@ wyoming==1.6.0
 wave==0.0.2
 google-cloud-texttospeech==2.25.0
 pyicu==2.14
+regex==2024.11.6
