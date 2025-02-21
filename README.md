@@ -230,10 +230,18 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 ## Known issues
 1. **Breaking Changes**
    - The custom firmware overwrites TTS URLs, so you can't use other TTS engines with the HAVPE voice assistants. Using `tts.speak` action will still work with other TTS engines, though. See [here](https://github.com/eslavnov/ttmg_server/issues/3) for more details.
-   - TTMG integration doesn't play well with HASS web conversations (not fixable until HASS natively supports text and audio streaming). Solution: don't use it with the web assistant! ¯\\_(ツ)_/¯
-   - Debugging in HASS won’t show meaningful data since everything is handled by the TTMG Server.
+     
+      **Solution:** Use the TTMG TTS for voice assistant settings, use native TTS integrations for things like `tts.speak`.
+   - TTMG integration doesn't play well with HASS web conversations (not fixable until HASS natively supports text and audio streaming). 
+
+      **Solution:** Do not use it with the web assistant! ¯\\_(ツ)_/¯
+   - Debugging in HASS won’t show meaningful data since everything is handled by the TTMG Server. 
+
+      **Solution:** Check the TTMG Server logs for some basic debug info.
 2. ~~**Sentence Parsing:**~~
-   - Fixed in v1.0.3: ~~The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses.~~ 
+   - ~~The sentence-splitting logic isn't perfect. It might split “What a nice day, Mr. Smith!” into “What a nice day, Mr.” and “Smith!” causing awkward pauses.~~
+     
+      **Solution:** Fixed in v1.0.3.
 3. **Context-Awareness:**
    - TTS engines have no idea about the context because we send one sentence at a time. This sometimes affects intonation and/or pauses between sentences, but in my testing (mostly with Google Cloud TTS) the difference is negligible.
 
