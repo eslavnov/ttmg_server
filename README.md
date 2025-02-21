@@ -218,7 +218,7 @@ Each HAVPE device needs its own configuration. Don't worry, it's a one-time thin
 external_components:
   - source:
       type: local
-      path: <output-of-the-generate_esphome_config.sh-script>
+      path: <output of tools/generate_esphome_config.py>
 ```
 5. Install the modified config and you are done!
 
