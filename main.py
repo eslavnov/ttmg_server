@@ -382,7 +382,6 @@ async def play_flac(client_id: str, request: Request):
     Otherwise if llm config (tools + messages) was preloaded via /preload, we use that.
     """
     config = config_get()
-    logger.info("PLAY")
 
     # Get llm config and preloaded text
     client_store = store_get(client_id)
@@ -394,7 +393,6 @@ async def play_flac(client_id: str, request: Request):
     # Bypass the LLM and call the TTS engine directly if we have preloaded text
     # (for example, provided by TTMG TTS as a local agent response)
     if preloaded_text:
-      logger.info(f"YAY! TEXT: {preloaded_text}")
       # Clear the preloaded_text
       hass_store["preloaded_text"]= None
       store_put("ttmg_tts", hass_store)
