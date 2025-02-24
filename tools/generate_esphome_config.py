@@ -7,6 +7,7 @@ import re
 DEVICE_ID = input("Enter your HAVPE device_id: ").strip()
 HOST = input("Enter TTMG Server host (e.g., 192.168.201.255): ").strip()
 PORT = input("Enter TTMG Server port (e.g., 8888): ").strip()
+AUDIO_FORMAT = input('Select audio format.Enter "flac" (default) or "mp3" (experimental, faster): ').strip()
 
 # Define variables
 REPO_URL = "https://github.com/esphome/home-assistant-voice-pe"
@@ -17,7 +18,7 @@ DEST_DIR = os.path.join(BASE_DEST_DIR, DEVICE_ID)
 VA_DIR_SOURCE = os.path.join(CLONE_DIR, "esphome/components/voice_assistant")
 VA_DIR_DEST = os.path.join(DEST_DIR, "voice_assistant")
 
-AUDIO_FILE_URL = f"http://{HOST}:{PORT}/play/{DEVICE_ID}.flac"
+AUDIO_FILE_URL = f"http://{HOST}:{PORT}/play/{DEVICE_ID}.{AUDIO_FORMAT}"
 
 # Create the destination directory if it doesn't exist
 os.makedirs(DEST_DIR, exist_ok=True)

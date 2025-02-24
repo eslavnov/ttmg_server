@@ -209,17 +209,27 @@ The final step: let's get your HAVPE devices talking to the TTMG Server.
 
 Each HAVPE device needs its own configuration. Don't worry, it's a one-time thing:
 1. Get your `device_id` from home assistant. Go to Automations, create a new one, select "device" as a trigger, choose your HAVPE device and then switch to the yaml view to get it. Don't save the automation, you just need to find out the `device_id`.
-2. Run `python generate_esphome_config.py`. It will ask you for the `device_id` and the TTMG Server's host and port. It will then grab the latest HAVPE config from the official repo and will apply two changes: 
+2. Run `python generate_esphome_config.py`. It will ask you for the `device_id` and the TTMG Server's host and port. It will also ask you for the preferred audio format - flac (default) or mp3 (faster, experimental). It will then grab the latest HAVPE config from the official repo and will apply two changes: 
     - Increase the default timeout to 15s (not really needed, but a good safety net in case LLM takes a long time to start generating a response for some reason)
     - Make it always fetch `/play/{client_id}.flac` from the TTMG Server instead of TTS responses. WARNING: this means that using any other assistants with this HAVPE device would fail since it will only talk to the TTMG Server.
 3. The script will output a path to the folder with patched components for your particular HAVPE device.
 4. Add the following code block to your device's yaml configuration in [ESPHome Device Builder](https://esphome.io/guides/getting_started_hassio.html#installing-esphome-device-builder) to apply the changes. To revert, simply remove/comment this block:
-```
-external_components:
-  - source:
-      type: local
-      path: <output of tools/generate_esphome_config.py>
-```
+    ```
+    external_components:
+      - source:
+          type: local
+          path: <output of tools/generate_esphome_config.py>
+    ```
+
+    If you want to use the mp3 audio format, you also need to add this block to your config:
+    ```
+    media_player:
+      - platform: speaker
+        id: !extend external_media_player
+        announcement_pipeline:
+          speaker: announcement_resampling_speaker
+          format: MP3 
+    ```
 5. Install the modified config and you are done!
 
 ## Usage
@@ -247,6 +257,10 @@ Now ask your HAVPE device to tell you a long story and see how it goes!
 
 
 ## Change log
+
+### v1.0.4
+**Added**
+- You can now choose to skip re-encoding to flac and stream MP3 data from the TTS engines directly into your HAVPE devices. To use MP3, you will have to generate & install a new HAVPE config with the updated `tools/generate_esphome_config.py`. Upside: now the responses start streaming a bit faster, I get 3-4 seconds on average before the audio starts playing (gpt-4o-mini + Google Cloud TTS). Downside: HAVPE by default uses FLAC since it is less demanding, so you tell me if you notice any issues! 
 
 ### v1.0.3
 **Added**
