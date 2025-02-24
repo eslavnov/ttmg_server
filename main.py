@@ -377,7 +377,7 @@ async def tts(client_id: str, request: Request):
 @app.get("/play/{client_id}.{audio_format}")
 async def play(client_id: str, audio_format: str, request: Request):
     """
-    Endpoint for calling the LLM and streaming the TTS audio in FLAC format.
+    Endpoint for calling the LLM and streaming the TTS audio in flac or mp3 format.
     We use ?prompt= from the query string.
     Otherwise if llm config (tools + messages) was preloaded via /preload, we use that.
     """
