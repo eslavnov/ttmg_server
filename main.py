@@ -374,13 +374,15 @@ async def tts(client_id: str, request: Request):
         headers={"Content-Disposition": f'inline; filename="{client_id}.flac"'}     # Content-Disposition so the browser sees it as a .flac file
     )
       
-@app.get("/play/{client_id}.flac")
-async def play_flac(client_id: str, request: Request):
+@app.get("/play/{client_id}.{audio_format}")
+async def play(client_id: str, audio_format: str, request: Request):
     """
     Endpoint for calling the LLM and streaming the TTS audio in FLAC format.
     We use ?prompt= from the query string.
     Otherwise if llm config (tools + messages) was preloaded via /preload, we use that.
     """
+    if audio_format not in ["flac", "mp3"]:
+        raise Exception("Uknown audio format", audio_format)
     config = config_get()
 
     # Get llm config and preloaded text
@@ -396,8 +398,13 @@ async def play_flac(client_id: str, request: Request):
       # Clear the preloaded_text
       hass_store["preloaded_text"]= None
       store_put("ttmg_tts", hass_store)
-      #  Call a function to run a TTS pipeline that returns a flac stream
-      flac_stream = stream_flac_from_audio_source(audio_streamer, preloaded_text, config, client_id)
+
+      #  Call a function to run a TTS pipeline that returns an audio stream
+      if audio_format == "flac":
+        audio_stream = stream_flac_from_audio_source(audio_streamer, preloaded_text, config, client_id)
+      elif audio_format == "mp3":
+        audio_stream = audio_streamer(preloaded_text, config, client_id)
+
     # Handles the regular flow where we want to call the LLM 
     # and pipe the response into the TTS engine
     else:
@@ -408,13 +415,17 @@ async def play_flac(client_id: str, request: Request):
       # Clear the preloaded_llm config
       client_store["preloaded_llm_config"]= None
       store_put(client_id, client_store)
-      # Call a function to run a LLM-TTS pipeline that returns a flac stream
-      flac_stream = stream_flac_from_audio_source(prompt_audio_streamer, prompt, config, client_id, llm_config)
+      
+      # Call a function to run a LLM-TTS pipeline that returns an audio stream
+      if audio_format == "flac":
+        audio_stream = stream_flac_from_audio_source(prompt_audio_streamer, prompt, config, client_id, llm_config)
+      elif audio_format == "mp3":
+        audio_stream = prompt_audio_streamer(prompt, config, client_id, llm_config)
 
     return StreamingResponse(
-        flac_stream,
-        media_type="audio/flac",
-        headers={"Content-Disposition": f'inline; filename="{client_id}.flac"'}     # Content-Disposition so the browser sees it as a .flac file
+        audio_stream,
+        media_type="audio/"+audio_format,
+        headers={"Content-Disposition": f'inline; filename="{client_id}.{audio_format}"'}     # Content-Disposition so the browser sees it correctly
     )
   
 @app.get("/history/{client_id}")
