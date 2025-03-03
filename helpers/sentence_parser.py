@@ -79,7 +79,7 @@ def process_buffer(buf):
         
 async def stream_sentence_generator(chunks, target_size=128, min_length=15):
     """
-    Accumulates chunks until at least 'target_size' characters 
+    Accumulates chunks until at least 'target_size' bytes of characters 
     have been buffered, then generates sentences from them
     with at least `min_length` characters.
     """
@@ -92,7 +92,7 @@ async def stream_sentence_generator(chunks, target_size=128, min_length=15):
         chunk_buffer.append(chunk)
         current_size += len(chunk.encode('utf-8'))
 
-        # Once we've accumulated at least target_size characters, process the buffered text.
+        # Once we've accumulated at least target_size bytes of characters, process the buffered text.
         if current_size >= target_size:
             combined_text = ''.join(chunk_buffer)
             chunk_buffer.clear() 
