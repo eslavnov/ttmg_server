@@ -81,7 +81,7 @@ async def stream_sentence_generator(chunks, target_size=128, min_length=15):
     """
     Accumulates chunks until at least 'target_size' bytes of characters 
     have been buffered, then generates sentences from them
-    with at least `min_length` characters.
+    with at least `min_length` bytes of characters.
     """
     buffer = "" # Our main buffer
     chunk_buffer = []  # Temporary buffer to collect chunks until we hit the target_size 
