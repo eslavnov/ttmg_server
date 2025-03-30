@@ -2,7 +2,14 @@ import icu
 import regex
 
 pattern = regex.compile(r'\b(\p{Lu}\w{0,3})\.(?!\w*\.)', regex.UNICODE)
-        
+
+async def chunk_text(text: str, chunk_size=128):
+    """
+    Yields successive 'chunk_size' pieces from 'text'.
+    """
+    for i in range(0, len(text), chunk_size):
+        yield text[i : i + chunk_size]
+            
 def merge_adjacent_sentences(sentences, min_length=15):
     """
     Merges small sentences together, so "OK! I will do that!" 
