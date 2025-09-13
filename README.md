@@ -1,3 +1,7 @@
+> [!IMPORTANT]  
+> New native solution for cloud TTS providers: https://github.com/eslavnov/wyoming-cloud-streamer
+
+
 # Talk To Me Goose - Stream LLM responses into TTS engines
 ![Logo](assets/logo.jpg)
 
